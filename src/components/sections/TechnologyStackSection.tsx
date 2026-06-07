@@ -419,7 +419,7 @@ function OrbitalStack() {
       const delta = timestamp - lastFrameRef.current;
       lastFrameRef.current = timestamp;
 
-      const speed = isMobile ? 0.016 : 0.022;
+      const speed = isMobile ? 0.006 : 0.006;
       rotationRef.current = (rotationRef.current + delta * speed) % 360;
 
       setRotationAngle(Number(rotationRef.current.toFixed(3)));
