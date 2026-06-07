@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://olidev.com.br/sitemap.xml

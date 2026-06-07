@@ -1,0 +1,16 @@
+{
+  "name": "Olidev",
+  "short_name": "Olidev",
+  "description": "Engenharia de software, inteligência artificial, infraestrutura, automação e soluções institucionais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
