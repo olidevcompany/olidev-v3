@@ -309,10 +309,7 @@ function highlightCode(code: string) {
     '<span class="text-neutral-300">$1</span>'
   );
 
-  html = html.replace(
-    /__TOKEN_(\d+)__/g,
-    (_, index) => placeholders[Number(index)]
-  );
+  html = html.replace(/__TOKEN_(\d+)__/g, (_, index) => placeholders[Number(index)]);
 
   return html;
 }
@@ -376,39 +373,26 @@ function useInView<T extends HTMLElement>(threshold = 0.2) {
   return { ref, inView };
 }
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 768px)");
-
-    const update = () => {
-      setIsMobile(mediaQuery.matches);
-    };
-
-    update();
-
-    mediaQuery.addEventListener("change", update);
-
-    return () => {
-      mediaQuery.removeEventListener("change", update);
-    };
-  }, []);
-
-  return isMobile;
-}
-
 function OrbitalStack() {
   const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({});
+  const [rotationAngle, setRotationAngle] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({});
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
 
-  const isMobile = useIsMobile();
-
   const containerRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (!autoRotate) return;
+
+    const rotationTimer = window.setInterval(() => {
+      setRotationAngle((prev) => Number(((prev + 0.3) % 360).toFixed(3)));
+    }, 50);
+
+    return () => window.clearInterval(rotationTimer);
+  }, [autoRotate]);
 
   function getRelatedItems(itemId: number): number[] {
     const currentItem = orbitalTools.find((item) => item.id === itemId);
@@ -418,6 +402,12 @@ function OrbitalStack() {
   function isRelatedToActive(itemId: number): boolean {
     if (!activeNodeId) return false;
     return getRelatedItems(activeNodeId).includes(itemId);
+  }
+
+  function centerViewOnNode(nodeId: number) {
+    const nodeIndex = orbitalTools.findIndex((item) => item.id === nodeId);
+    const targetAngle = (nodeIndex / orbitalTools.length) * 360;
+    setRotationAngle(270 - targetAngle);
   }
 
   function toggleItem(id: number) {
@@ -436,12 +426,12 @@ function OrbitalStack() {
 
         const relatedItems = getRelatedItems(id);
         const pulse: Record<number, boolean> = {};
-
         relatedItems.forEach((relId) => {
           pulse[relId] = true;
         });
 
         setPulseEffect(pulse);
+        centerViewOnNode(id);
       } else {
         setActiveNodeId(null);
         setAutoRotate(true);
@@ -462,18 +452,16 @@ function OrbitalStack() {
   }
 
   function calculateNodePosition(index: number, total: number) {
-    const angle = (index / total) * 360;
-    const radius = isMobile ? 118 : 155;
+    const angle = ((index / total) * 360 + rotationAngle) % 360;
+    const radius = 155;
     const radian = (angle * Math.PI) / 180;
 
     const x = radius * Math.cos(radian);
     const y = radius * Math.sin(radian);
-
     const zIndex = Math.round(100 + 50 * Math.cos(radian));
-
     const opacity = Math.max(
-      0.52,
-      Math.min(1, 0.52 + 0.48 * ((1 + Math.sin(radian)) / 2))
+      0.42,
+      Math.min(1, 0.42 + 0.58 * ((1 + Math.sin(radian)) / 2))
     );
 
     return { x, y, angle, zIndex, opacity };
@@ -483,7 +471,7 @@ function OrbitalStack() {
     <div
       ref={containerRef}
       onClick={handleContainerClick}
-      className="relative flex h-[440px] w-full items-center justify-center overflow-hidden rounded-[1.75rem] border border-white/10 bg-black/[0.72] md:h-[520px]"
+      className="relative flex h-[520px] w-full items-center justify-center overflow-hidden rounded-[1.75rem] border border-white/10 bg-black/[0.72]"
     >
       <div className="pointer-events-none absolute inset-0 opacity-[0.12] bg-[linear-gradient(to_right,rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:44px_44px]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.12),transparent_42%)]" />
@@ -499,150 +487,114 @@ function OrbitalStack() {
         className="relative flex h-full w-full items-center justify-center"
         style={{ perspective: "1000px" }}
       >
-        <div className="absolute z-30 flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-white text-black shadow-[0_0_70px_rgba(255,255,255,0.14)]">
-          <div className="absolute h-24 w-24 animate-ping rounded-full border border-white/10 opacity-40 motion-reduce:animate-none" />
+        <div className="absolute z-10 flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-white text-black shadow-[0_0_70px_rgba(255,255,255,0.14)]">
+          <div className="absolute h-24 w-24 animate-ping rounded-full border border-white/10 opacity-40" />
           <div className="absolute h-32 w-32 rounded-full border border-white/5" />
-          <span className="text-[10px] font-black tracking-[0.22em]">
-            OLIDEV
-          </span>
+          <span className="text-[10px] font-black tracking-[0.22em]">OLIDEV</span>
         </div>
 
-        <div className="absolute h-[236px] w-[236px] rounded-full border border-white/10 md:h-[310px] md:w-[310px]" />
-        <div className="absolute h-[188px] w-[188px] rounded-full border border-white/[0.06] md:h-[245px] md:w-[245px]" />
+        <div className="absolute h-[310px] w-[310px] rounded-full border border-white/10" />
+        <div className="absolute h-[245px] w-[245px] rounded-full border border-white/[0.06]" />
 
-        <div
-          className={cn(
-            "absolute inset-0 flex items-center justify-center will-change-transform",
-            autoRotate && "animate-[orbital-spin_42s_linear_infinite]"
-          )}
-        >
-          {orbitalTools.map((item, index) => {
-            const position = calculateNodePosition(index, orbitalTools.length);
-            const isExpanded = expandedItems[item.id];
-            const isRelated = isRelatedToActive(item.id);
-            const isPulsing = pulseEffect[item.id];
-            const Icon = item.icon;
+        {orbitalTools.map((item, index) => {
+          const position = calculateNodePosition(index, orbitalTools.length);
+          const isExpanded = expandedItems[item.id];
+          const isRelated = isRelatedToActive(item.id);
+          const isPulsing = pulseEffect[item.id];
+          const Icon = item.icon;
 
-            return (
+          return (
+            <div
+              key={item.id}
+              ref={(el) => {
+                nodeRefs.current[item.id] = el;
+              }}
+              className="absolute cursor-pointer transition-all duration-700"
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px)`,
+                zIndex: isExpanded ? 220 : position.zIndex,
+                opacity: isExpanded ? 1 : position.opacity,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleItem(item.id);
+              }}
+            >
               <div
-                key={item.id}
-                ref={(el) => {
-                  nodeRefs.current[item.id] = el;
-                }}
-                className="absolute cursor-pointer transition-transform duration-500 will-change-transform"
+                className={cn("absolute -inset-2 rounded-full", isPulsing && "animate-pulse")}
                 style={{
-                  transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
-                  zIndex: isExpanded ? 220 : position.zIndex,
-                  opacity: isExpanded ? 1 : position.opacity,
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 70%)",
+                  width: `${item.energy * 0.38 + 34}px`,
+                  height: `${item.energy * 0.38 + 34}px`,
+                  left: `-${(item.energy * 0.38 + 34 - 34) / 2}px`,
+                  top: `-${(item.energy * 0.38 + 34 - 34) / 2}px`,
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleItem(item.id);
-                }}
+              />
+
+              <div
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
+                  isExpanded
+                    ? "scale-150 border-white bg-white text-black shadow-lg shadow-white/20"
+                    : isRelated
+                      ? "border-white bg-white/60 text-black"
+                      : "border-white/35 bg-black text-white"
+                )}
               >
-                <div
-                  className={cn(
-                    "absolute -inset-2 rounded-full",
-                    isPulsing && "animate-pulse motion-reduce:animate-none"
-                  )}
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 70%)",
-                    width: `${item.energy * 0.38 + 34}px`,
-                    height: `${item.energy * 0.38 + 34}px`,
-                    left: `-${(item.energy * 0.38 + 34 - 34) / 2}px`,
-                    top: `-${(item.energy * 0.38 + 34 - 34) / 2}px`,
-                  }}
-                />
+                <Icon size={15} />
+              </div>
 
-                <div
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
-                    isExpanded
-                      ? "scale-150 border-white bg-white text-black shadow-lg shadow-white/20"
-                      : isRelated
-                        ? "border-white bg-white/60 text-black"
-                        : "border-white/35 bg-black text-white"
-                  )}
-                >
-                  <Icon size={15} />
-                </div>
+              <div
+                className={cn(
+                  "absolute left-1/2 top-12 -translate-x-1/2 whitespace-nowrap text-[11px] font-semibold tracking-wider transition-all duration-300",
+                  isExpanded ? "scale-125 text-white" : "text-white/65"
+                )}
+              >
+                {item.short}
+              </div>
 
-                <div
-                  className={cn(
-                    "absolute left-1/2 top-12 -translate-x-1/2 whitespace-nowrap text-[11px] font-semibold tracking-wider transition-all duration-300",
-                    isExpanded ? "scale-125 text-white" : "text-white/65"
-                  )}
-                >
-                  {item.short}
-                </div>
+              {isExpanded && (
+                <div className="absolute left-1/2 top-20 w-64 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/15 bg-black/90 p-4 shadow-2xl shadow-black/70 backdrop-blur-xl">
+                  <div className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-white/40" />
 
-                {isExpanded && (
-                  <div className="absolute left-1/2 top-20 w-56 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/15 bg-black/95 p-4 shadow-2xl shadow-black/70 backdrop-blur-md md:w-64 md:bg-black/90 md:backdrop-blur-xl">
-                    <div className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-white/40" />
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[9px] uppercase tracking-[0.18em] text-neutral-300">
+                      Enterprise
+                    </span>
 
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[9px] uppercase tracking-[0.18em] text-neutral-300">
-                        Enterprise
-                      </span>
+                    <span className="font-mono text-xs text-white/45">
+                      {item.energy}%
+                    </span>
+                  </div>
 
-                      <span className="font-mono text-xs text-white/45">
-                        {item.energy}%
-                      </span>
+                  <h4 className="mt-4 bg-gradient-to-b from-white to-neutral-400 bg-clip-text text-xl font-black tracking-[-0.05em] text-transparent">
+                    {item.title}
+                  </h4>
+
+                  <p className="mt-3 text-xs leading-6 text-neutral-300">
+                    {item.content}
+                  </p>
+
+                  <div className="mt-4 border-t border-white/10 pt-4">
+                    <div className="mb-2 flex items-center text-xs text-white/60">
+                      <Zap size={11} className="mr-2" />
+                      Operational Index
                     </div>
 
-                    <h4 className="mt-4 bg-gradient-to-b from-white to-neutral-400 bg-clip-text text-xl font-black tracking-[-0.05em] text-transparent">
-                      {item.title}
-                    </h4>
-
-                    <p className="mt-3 text-xs leading-6 text-neutral-300">
-                      {item.content}
-                    </p>
-
-                    <div className="mt-4 border-t border-white/10 pt-4">
-                      <div className="mb-2 flex items-center text-xs text-white/60">
-                        <Zap size={11} className="mr-2" />
-                        Operational Index
-                      </div>
-
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                        <div
-                          className="h-full rounded-full bg-white"
-                          style={{ width: `${item.energy}%` }}
-                        />
-                      </div>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-white"
+                        style={{ width: `${item.energy}%` }}
+                      />
                     </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
-
-      <style jsx>{`
-        @keyframes orbital-spin {
-          from {
-            transform: rotate(0deg);
-          }
-
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @media (max-width: 768px) {
-          @keyframes orbital-spin {
-            from {
-              transform: rotate(0deg) scale(0.82);
-            }
-
-            to {
-              transform: rotate(360deg) scale(0.82);
-            }
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -655,17 +607,10 @@ export default function TechnologyStackSection() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const activeCode = useMemo(() => {
-    return (
-      stackTabs.find((tab) => tab.id === activeTab)?.code ?? stackTabs[0].code
-    );
+    return stackTabs.find((tab) => tab.id === activeTab)?.code ?? stackTabs[0].code;
   }, [activeTab]);
 
-  const { displayed, isTyping } = useTypingEffect(
-    inView ? activeCode : "",
-    8,
-    120
-  );
-
+  const { displayed, isTyping } = useTypingEffect(inView ? activeCode : "", 8, 120);
   const highlightedHtml = useMemo(() => highlightCode(displayed), [displayed]);
 
   useEffect(() => {
@@ -734,8 +679,8 @@ export default function TechnologyStackSection() {
             className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-neutral-300"
           >
             A OLIDEV não se limita a ferramentas. Seleciona linguagens,
-            frameworks, infraestrutura e padrões conforme a criticidade, escala
-            e natureza de cada operação.
+            frameworks, infraestrutura e padrões conforme a criticidade,
+            escala e natureza de cada operação.
           </motion.p>
         </div>
 
@@ -791,11 +736,7 @@ export default function TechnologyStackSection() {
                     aria-label="Copiar código"
                     title="Copiar código"
                   >
-                    {copied ? (
-                      <Check className="h-5 w-5" />
-                    ) : (
-                      <Copy className="h-5 w-5" />
-                    )}
+                    {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
                   </button>
                 </div>
 
