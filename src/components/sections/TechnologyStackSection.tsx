@@ -379,20 +379,62 @@ function OrbitalStack() {
   const [autoRotate, setAutoRotate] = useState(true);
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({});
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const rotationRef = useRef(0);
+  const frameRef = useRef<number | null>(null);
+  const lastFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!autoRotate) return;
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
 
-    const rotationTimer = window.setInterval(() => {
-      setRotationAngle((prev) => Number(((prev + 0.3) % 360).toFixed(3)));
-    }, 50);
+    const update = () => {
+      setIsMobile(mediaQuery.matches);
+    };
 
-    return () => window.clearInterval(rotationTimer);
-  }, [autoRotate]);
+    update();
+    mediaQuery.addEventListener("change", update);
+
+    return () => {
+      mediaQuery.removeEventListener("change", update);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!autoRotate) {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+      lastFrameRef.current = null;
+      return;
+    }
+
+    const rotate = (timestamp: number) => {
+      if (lastFrameRef.current === null) {
+        lastFrameRef.current = timestamp;
+      }
+
+      const delta = timestamp - lastFrameRef.current;
+      lastFrameRef.current = timestamp;
+
+      const speed = isMobile ? 0.016 : 0.022;
+      rotationRef.current = (rotationRef.current + delta * speed) % 360;
+
+      setRotationAngle(Number(rotationRef.current.toFixed(3)));
+
+      frameRef.current = requestAnimationFrame(rotate);
+    };
+
+    frameRef.current = requestAnimationFrame(rotate);
+
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+      lastFrameRef.current = null;
+    };
+  }, [autoRotate, isMobile]);
 
   function getRelatedItems(itemId: number): number[] {
     const currentItem = orbitalTools.find((item) => item.id === itemId);
@@ -407,7 +449,10 @@ function OrbitalStack() {
   function centerViewOnNode(nodeId: number) {
     const nodeIndex = orbitalTools.findIndex((item) => item.id === nodeId);
     const targetAngle = (nodeIndex / orbitalTools.length) * 360;
-    setRotationAngle(270 - targetAngle);
+    const nextAngle = 270 - targetAngle;
+
+    rotationRef.current = nextAngle;
+    setRotationAngle(nextAngle);
   }
 
   function toggleItem(id: number) {
@@ -426,6 +471,7 @@ function OrbitalStack() {
 
         const relatedItems = getRelatedItems(id);
         const pulse: Record<number, boolean> = {};
+
         relatedItems.forEach((relId) => {
           pulse[relId] = true;
         });
@@ -453,12 +499,19 @@ function OrbitalStack() {
 
   function calculateNodePosition(index: number, total: number) {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = 155;
+    const radius = isMobile ? 136 : 155;
     const radian = (angle * Math.PI) / 180;
 
-    const x = radius * Math.cos(radian);
-    const y = radius * Math.sin(radian);
+    let x = radius * Math.cos(radian);
+    let y = radius * Math.sin(radian);
+
+    if (isMobile) {
+      x = Math.round(x * 2) / 2;
+      y = Math.round(y * 2) / 2;
+    }
+
     const zIndex = Math.round(100 + 50 * Math.cos(radian));
+
     const opacity = Math.max(
       0.42,
       Math.min(1, 0.42 + 0.58 * ((1 + Math.sin(radian)) / 2))
@@ -490,7 +543,9 @@ function OrbitalStack() {
         <div className="absolute z-10 flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-white text-black shadow-[0_0_70px_rgba(255,255,255,0.14)]">
           <div className="absolute h-24 w-24 animate-ping rounded-full border border-white/10 opacity-40" />
           <div className="absolute h-32 w-32 rounded-full border border-white/5" />
-          <span className="text-[10px] font-black tracking-[0.22em]">OLIDEV</span>
+          <span className="text-[10px] font-black tracking-[0.22em]">
+            OLIDEV
+          </span>
         </div>
 
         <div className="absolute h-[310px] w-[310px] rounded-full border border-white/10" />
@@ -509,11 +564,18 @@ function OrbitalStack() {
               ref={(el) => {
                 nodeRefs.current[item.id] = el;
               }}
-              className="absolute cursor-pointer transition-all duration-700"
+              className={cn(
+                "absolute cursor-pointer will-change-transform",
+                autoRotate
+                  ? "transition-opacity duration-300"
+                  : "transition-all duration-700"
+              )}
               style={{
-                transform: `translate(${position.x}px, ${position.y}px)`,
+                transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
                 zIndex: isExpanded ? 220 : position.zIndex,
                 opacity: isExpanded ? 1 : position.opacity,
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -521,7 +583,10 @@ function OrbitalStack() {
               }}
             >
               <div
-                className={cn("absolute -inset-2 rounded-full", isPulsing && "animate-pulse")}
+                className={cn(
+                  "absolute -inset-2 rounded-full",
+                  isPulsing && "animate-pulse"
+                )}
                 style={{
                   background:
                     "radial-gradient(circle, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 70%)",
