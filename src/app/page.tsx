@@ -6,6 +6,7 @@ import FloatingChatWidget from "@/components/ui/floating-chat-widget";
 import TechnologyStackSection from "@/components/sections/TechnologyStackSection";
 import InstitutionalArchitectureSection from "@/components/sections/InstitutionalArchitectureSection";
 import CinematicVideoSection from "@/components/sections/CinematicVideoSection";
+import OperationalExcellenceSection from "@/components/sections/OperationalExcellenceSection";
 import FAQSection from "@/components/sections/FAQSection";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import CTASection from "@/components/sections/CTASection";
@@ -23,6 +24,7 @@ export default function Home() {
       <TechnologyStackSection />
       <InstitutionalArchitectureSection />
       <CinematicVideoSection />
+      <OperationalExcellenceSection />
       <FAQSection />
       <TestimonialsSection />
       <CTASection />
