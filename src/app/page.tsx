@@ -7,6 +7,7 @@ import TechnologyStackSection from "@/components/sections/TechnologyStackSection
 import InstitutionalArchitectureSection from "@/components/sections/InstitutionalArchitectureSection";
 import CinematicVideoSection from "@/components/sections/CinematicVideoSection";
 import OperationalExcellenceSection from "@/components/sections/OperationalExcellenceSection";
+import OlidevAcademySection from "@/components/sections/OlidevAcademySection";
 import FAQSection from "@/components/sections/FAQSection";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import CTASection from "@/components/sections/CTASection";
@@ -25,6 +26,7 @@ export default function Home() {
       <InstitutionalArchitectureSection />
       <CinematicVideoSection />
       <OperationalExcellenceSection />
+      <OlidevAcademySection />
       <FAQSection />
       <TestimonialsSection />
       <CTASection />
