@@ -308,13 +308,13 @@ function HeroHeader() {
             <div className="flex w-full justify-between lg:w-auto">
               <Link href="/" aria-label="home" className="flex items-center">
                 <Image
-                  src="/logo-olidev.jpeg"
-                  alt="OLIDEV"
-                  width={170}
-                  height={42}
-                  priority
-                  className="h-8 w-auto object-contain"
-                />
+  src="/brand/olidev-wordmark-white.png"
+  alt="OLIDEV"
+  width={220}
+  height={48}
+  priority
+  className="h-5 w-auto object-contain md:h-6"
+/>
               </Link>
 
               <button

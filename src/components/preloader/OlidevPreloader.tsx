@@ -93,64 +93,97 @@ export default function OlidevPreloader() {
               className="pointer-events-none absolute -inset-24 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_62%)]"
             />
 
-            <motion.div
-              initial={{
-                opacity: 0,
-                scale: 0.94,
-                filter: "blur(16px)",
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                filter: "blur(0px)",
-              }}
-              transition={{
-                duration: 1.15,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="relative overflow-hidden"
-            >
-              <Scanline />
-
+            <div className="relative flex flex-col items-center overflow-visible">
               <motion.div
-                initial={{ x: "-220%", opacity: 0 }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.68,
+                  y: 18,
+                  filter: "blur(18px)",
+                }}
                 animate={{
-                  x: "220%",
-                  opacity: [0, 0.6, 0],
+                  opacity: 1,
+                  scale: [0.68, 1.06, 0.84],
+                  y: [18, 0, -18],
+                  filter: "blur(0px)",
                 }}
                 transition={{
-                  duration: 1.85,
-                  delay: 1.12,
-                  ease: "easeInOut",
+                  duration: 2.15,
+                  ease: [0.16, 1, 0.3, 1],
                 }}
-                className="pointer-events-none absolute inset-y-0 w-[70px] bg-gradient-to-r from-transparent via-white/50 to-transparent blur-sm"
-              />
-
-              <motion.div
-                animate={{
-                  filter: [
-                    "drop-shadow(0 0 0px rgba(255,255,255,0))",
-                    "drop-shadow(0 0 30px rgba(255,255,255,0.22))",
-                    "drop-shadow(0 0 10px rgba(255,255,255,0.08))",
-                    "drop-shadow(0 0 0px rgba(255,255,255,0))",
-                  ],
-                }}
-                transition={{
-                  duration: 2.35,
-                  delay: 1.35,
-                  ease: "easeInOut",
-                }}
+                className="relative z-10"
               >
+                <motion.div
+                  animate={{
+                    filter: [
+                      "drop-shadow(0 0 0px rgba(255,255,255,0))",
+                      "drop-shadow(0 0 34px rgba(255,255,255,0.20))",
+                      "drop-shadow(0 0 8px rgba(255,255,255,0.05))",
+                    ],
+                  }}
+                  transition={{
+                    duration: 2.2,
+                    delay: 0.75,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Image
+                    src="/brand/olidev-symbol-white.png"
+                    alt="Símbolo OLIDEV"
+                    width={360}
+                    height={360}
+                    priority
+                    className="h-auto w-[122px] md:w-[154px]"
+                  />
+                </motion.div>
+              </motion.div>
+
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: 26,
+                  clipPath: "inset(0 100% 0 0)",
+                  filter: "blur(10px)",
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  clipPath: "inset(0 0% 0 0)",
+                  filter: "blur(0px)",
+                }}
+                transition={{
+                  duration: 1.15,
+                  delay: 1.48,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="relative mt-3 overflow-hidden"
+              >
+                <Scanline />
+
+                <motion.div
+                  initial={{ x: "-180%", opacity: 0 }}
+                  animate={{
+                    x: "190%",
+                    opacity: [0, 0.62, 0],
+                  }}
+                  transition={{
+                    duration: 1.35,
+                    delay: 1.7,
+                    ease: "easeInOut",
+                  }}
+                  className="pointer-events-none absolute inset-y-0 z-10 w-[80px] bg-gradient-to-r from-transparent via-white/60 to-transparent blur-md"
+                />
+
                 <Image
-                  src="/logo-olidev.jpeg"
+                  src="/brand/olidev-wordmark-white.png"
                   alt="OLIDEV"
-                  width={300}
-                  height={76}
+                  width={620}
+                  height={120}
                   priority
-                  className="h-auto w-[240px] md:w-[300px]"
+                  className="h-auto w-[220px] md:w-[280px]"
                 />
               </motion.div>
-            </motion.div>
+            </div>
 
             <motion.p
               initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}

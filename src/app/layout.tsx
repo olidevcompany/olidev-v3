@@ -1,3 +1,5 @@
+import CookieConsent from "@/components/CookieConsent";
+import AnalyticsProvider from "@/components/AnalyticsProvider";
 import type { Metadata } from "next";
 import "./globals.css";
 import OlidevPreloader from "@/components/preloader/OlidevPreloader";
@@ -50,6 +52,8 @@ export default function RootLayout({
       <body>
         <OlidevPreloader />
         {children}
+          <CookieConsent />
+<AnalyticsProvider />
       </body>
     </html>
   );
