@@ -61,7 +61,7 @@ export default function CookieConsent() {
 
   return (
     <div
-      className="fixed bottom-5 right-5 z-[100] w-[calc(100%-2.5rem)] max-w-[430px] overflow-hidden rounded-2xl border border-white/15 bg-black/90 p-5 text-white shadow-[0_24px_90px_rgba(0,0,0,0.58)] backdrop-blur-2xl md:bottom-7 md:right-[104px] md:w-[min(430px,calc(100%-8rem))]"
+      className="fixed bottom-[96px] right-4 z-[100] w-[calc(100%-2rem)] max-w-[430px] overflow-hidden rounded-2xl border border-white/15 bg-black/90 p-5 text-white shadow-[0_24px_90px_rgba(0,0,0,0.58)] backdrop-blur-2xl md:bottom-7 md:right-[104px] md:w-[min(430px,calc(100%-8rem))]"
       role="dialog"
       aria-label="Preferências de cookies"
     >
@@ -143,35 +143,35 @@ export default function CookieConsent() {
           </div>
         )}
 
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-          {isCustomizing ? (
-            <button
-              type="button"
-              onClick={handleSavePreferences}
-              className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-white px-4 text-xs font-semibold uppercase tracking-[0.14em] text-black transition hover:scale-[1.01] hover:bg-neutral-200 active:scale-[0.98]"
-            >
-              Salvar preferências
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsCustomizing(true)}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.035] px-4 text-xs font-semibold uppercase tracking-[0.14em] text-white transition hover:border-white/30 hover:bg-white/[0.08]"
-            >
-              Personalizar
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+  <button
+    type="button"
+    onClick={handleAcceptAll}
+    className="order-1 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-black transition hover:scale-[1.01] hover:bg-neutral-200 active:scale-[0.98] sm:order-2 sm:h-11 sm:flex-1"
+  >
+    Aceitar todos
+    <ChevronDown className="h-4 w-4 -rotate-90" />
+  </button>
 
-          <button
-            type="button"
-            onClick={handleAcceptAll}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-white px-4 text-xs font-semibold uppercase tracking-[0.14em] text-black transition hover:scale-[1.01] hover:bg-neutral-200 active:scale-[0.98]"
-          >
-            Aceitar todos
-            <ChevronDown className="h-3.5 w-3.5 -rotate-90" />
-          </button>
-        </div>
+  {isCustomizing ? (
+    <button
+      type="button"
+      onClick={handleSavePreferences}
+      className="order-2 inline-flex h-11 w-full items-center justify-center rounded-xl border border-white/20 bg-white/[0.06] px-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white transition hover:border-white/35 hover:bg-white/[0.1] active:scale-[0.98] sm:order-1 sm:flex-1"
+    >
+      Salvar preferências
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={() => setIsCustomizing(true)}
+      className="order-2 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-200 transition hover:border-white/35 hover:bg-white/[0.08] active:scale-[0.98] sm:order-1 sm:flex-1"
+    >
+      Personalizar
+      <Settings2 className="h-3.5 w-3.5" />
+    </button>
+  )}
+</div>
 
         <p className="mt-4 text-[11px] leading-5 text-neutral-500">
           Você pode alterar suas preferências posteriormente na Política de
