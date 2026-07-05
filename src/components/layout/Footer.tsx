@@ -73,11 +73,12 @@ export default function Footer() {
           <AnimatedContainer className="max-w-md">
             <Link href="/" className="inline-flex items-center">
               <Image
-                src="/logo-olidev.jpeg"
-                alt="OLIDEV"
-                width={170}
-                height={44}
-                className="h-auto w-[170px] object-contain"
+              src="/brand/olidev-wordmark-white.png"
+              alt="OLIDEV"
+              width={220}
+              height={48}
+              priority
+              className="h-5 w-auto object-contain md:h-6"
               />
             </Link>
 

@@ -531,7 +531,7 @@ function OrbitalStack() {
 
       <div className="absolute left-6 top-6 z-20">
         <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-[0.28em] text-neutral-400">
-          Orbital Stack
+         Stack
         </span>
       </div>
 
@@ -540,12 +540,15 @@ function OrbitalStack() {
         className="relative flex h-full w-full items-center justify-center"
         style={{ perspective: "1000px" }}
       >
-        <div className="absolute z-10 flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-white text-black shadow-[0_0_70px_rgba(255,255,255,0.14)]">
-          <div className="absolute h-24 w-24 animate-ping rounded-full border border-white/10 opacity-40" />
-          <div className="absolute h-32 w-32 rounded-full border border-white/5" />
-          <span className="text-[10px] font-black tracking-[0.22em]">
-            OLIDEV
-          </span>
+        <div className="absolute z-10 flex h-16 w-16 items-center justify-center rounded-full border border-white/12 bg-black/90 text-white shadow-[0_0_70px_rgba(255,255,255,0.08)] backdrop-blur-sm">
+        <div className="absolute h-24 w-24 animate-ping rounded-full border border-white/10 opacity-30" />
+        <div className="absolute h-32 w-32 rounded-full border border-white/5" />
+
+    <img
+    src="/brand/olidev-symbol-white.png"
+    alt="Símbolo OLIDEV"
+    className="relative z-10 h-10 w-10 object-contain"
+       />
         </div>
 
         <div className="absolute h-[310px] w-[310px] rounded-full border border-white/10" />

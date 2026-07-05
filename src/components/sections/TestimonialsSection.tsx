@@ -5,58 +5,76 @@ import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    text: "A OLIDEV trouxe clareza técnica e uma visão de arquitetura que elevou completamente a forma como estruturamos nossas operações digitais.",
-    name: "Diretoria Executiva",
-    role: "Instituição parceira",
-    initials: "DE",
+    text: "A OLIDEV demonstrou uma capacidade incomum de transformar necessidades operacionais complexas em uma arquitetura clara, segura e preparada para evolução. O resultado foi uma solução com visão de longo prazo, não apenas uma entrega pontual.",
+    name: "Amaro Moura Filho",
+    role: "CFO - Grupo Moura S/A",
+    image: "/partners/amaro-filho.png",
+    imageAlt: "Amaro Moura Filho",
+    type: "photo" as const,
   },
   {
-    text: "O diferencial esteve na capacidade de entender o cenário antes de propor tecnologia. A solução nasceu com robustez, não como improviso.",
-    name: "Gestão de Operações",
-    role: "Cliente corporativo",
-    initials: "GO",
+    text: "O trabalho da OLIDEV se destacou pela combinação entre refinamento visual, decisões técnicas sólidas e entendimento estratégico do negócio. A equipe trouxe maturidade para cada etapa da construção.",
+    name: "Manuella Oliveira",
+    role: "Presidente - Start Ensino LTDA",
+    image: "/partners/manuella-oliveira.png",
+    imageAlt: "Manuella Oliveira",
+    type: "photo" as const,
   },
   {
-    text: "A entrega demonstrou rigor técnico, refinamento visual e preocupação real com escalabilidade, segurança e continuidade operacional.",
-    name: "Coordenação Técnica",
-    role: "Projeto institucional",
-    initials: "CT",
+    text: "Encontramos na OLIDEV um parceiro capaz de discutir arquitetura, operação, segurança e experiência do usuário no mesmo nível. Isso trouxe muito mais consistência para o nosso projeto digital.",
+    name: "Renata Diniz",
+    role: "CEO - Montti Plaza",
+    image: "/partners/renata-diniz.png",
+    imageAlt: "Renata Diniz",
+    type: "photo" as const,
   },
   {
-    text: "Mais do que desenvolvimento, encontramos uma equipe capaz de traduzir complexidade em uma plataforma sólida, elegante e operacional.",
-    name: "Secretaria Executiva",
-    role: "Ambiente público",
-    initials: "SE",
+    text: "A condução foi precisa desde o diagnóstico. A OLIDEV não apresentou uma solução genérica: estruturou uma base tecnológica alinhada ao nosso fluxo, à nossa escala e às decisões que precisávamos tomar.",
+    name: "Ester Paiva",
+    role: "Diretora Executiva - Bom Sucesso LTDA",
+    image: "/partners/ester-paiva.png",
+    imageAlt: "Ester Paiva",
+    type: "photo" as const,
   },
   {
-    text: "A abordagem da OLIDEV foi precisa: diagnóstico, arquitetura, execução e acompanhamento. Um padrão de engenharia raro no mercado.",
-    name: "Núcleo Estratégico",
-    role: "Organização parceira",
-    initials: "NE",
+    text: "A OLIDEV conseguiu unir tecnologia, clareza operacional e presença institucional. O projeto foi pensado com profundidade, priorizando confiabilidade, continuidade e capacidade de crescimento.",
+    name: "César Vicari",
+    role: "CEO - Airsell Company",
+    image: "/partners/cesar-vicari.png",
+    imageAlt: "César Vicari",
+    type: "photo" as const,
   },
   {
-    text: "A experiência final ficou extremamente refinada, mas sem perder a profundidade técnica necessária para sustentar operações críticas.",
-    name: "Liderança de Projeto",
-    role: "Plataforma digital",
-    initials: "LP",
+    text: "A OLIDEV trouxe uma leitura muito madura do nosso cenário. Antes de propor tecnologia, a equipe compreendeu os gargalos operacionais e desenhou uma solução que realmente fazia sentido para a rotina da organização.",
+    name: "Marina Albuquerque",
+    role: "Diretora de Operações - CupWell",
+    image: "/partners/marina-albuquerque.jpg",
+    imageAlt: "Marina Albuquerque",
+    type: "photo" as const,
   },
   {
-    text: "O projeto evoluiu com previsibilidade, comunicação objetiva e decisões técnicas muito bem fundamentadas.",
-    name: "Gerência Institucional",
-    role: "Cliente estratégico",
-    initials: "GI",
+    text: "O diferencial esteve na qualidade da arquitetura e no cuidado com os detalhes. A OLIDEV conseguiu equilibrar sofisticação visual, usabilidade e uma estrutura técnica robusta para sustentar o crescimento da plataforma.",
+    name: "Ricardo Valença",
+    role: "Head de Tecnologia - Grupo Altiva",
+    image: "/partners/ricardo-valenca.jpg",
+    imageAlt: "Ricardo Valença",
+    type: "photo" as const,
   },
   {
-    text: "A OLIDEV atuou como uma extensão técnica da nossa operação, com visão de longo prazo e execução consistente.",
-    name: "Direção Operacional",
-    role: "Organização privada",
-    initials: "DO",
+    text: "A experiência com a OLIDEV foi marcada por organização, transparência e domínio técnico. A equipe traduziu uma demanda ampla em um sistema bem estruturado, com prioridade para segurança e inteligência operacional.",
+    name: "Camila Torres",
+    role: "Gerente de Projetos - Aurora Desenvolvimento",
+    image: "/partners/camila-torres.jpg",
+    imageAlt: "Camila Torres",
+    type: "photo" as const,
   },
   {
-    text: "O resultado transmitiu confiança institucional, sofisticação visual e uma base tecnológica preparada para crescimento.",
-    name: "Conselho Administrativo",
-    role: "Projeto corporativo",
-    initials: "CA",
+    text: "A OLIDEV nos deu confiança pela forma como conduziu o projeto: visão estratégica, comunicação objetiva e preocupação genuína com a sustentabilidade técnica da solução. É uma parceria que agrega valor além do desenvolvimento.",
+    name: "Felipe Menezes",
+    role: "Presidente - Instituto Horizonte",
+    image: "/partners/felipe-menezes.jpg",
+    imageAlt: "Felipe Menezes",
+    type: "photo" as const,
   },
 ];
 
@@ -91,32 +109,41 @@ function TestimonialsColumn({
       >
         {Array.from({ length: 2 }).map((_, index) => (
           <React.Fragment key={index}>
-            {testimonials.map(({ text, name, role, initials }, i) => (
-              <div
-                key={`${name}-${index}-${i}`}
-                className="group w-full max-w-xs rounded-3xl border border-white/10 bg-white/[0.035] p-7 text-white shadow-2xl shadow-black/30 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/[0.055]"
-              >
-                <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            {testimonials.map(({ text, name, role, image, imageAlt, type }, i) => (
+  <div
+    key={`${name}-${index}-${i}`}
+    className="group w-full max-w-xs rounded-3xl border border-white/10 bg-white/[0.035] p-7 text-white shadow-2xl shadow-black/30 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/[0.055]"
+  >
+    <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                <p className="text-sm leading-7 text-neutral-300">
-                  “{text}”
-                </p>
+    <p className="text-sm leading-7 text-neutral-300">
+      “{text}”
+    </p>
 
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white text-sm font-bold text-black">
-                    {initials}
-                  </div>
+    <div className="mt-6 flex items-center gap-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.06]">
+        <img
+          src={image}
+          alt={imageAlt}
+          className={
+          type === "photo"
+          ? "h-full w-full rounded-full object-cover"
+          : "h-7 w-7 object-contain"
+        }
+      />
+      </div>
 
-                  <div className="flex flex-col">
-                    <div className="text-sm font-semibold leading-5 text-neutral-100">
-                      {name}
-                    </div>
-                    <div className="text-xs leading-5 text-neutral-500">
-                      {role}
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <div className="flex flex-col">
+        <div className="text-sm font-semibold leading-5 text-neutral-100">
+          {name}
+        </div>
+
+        <div className="text-xs leading-5 text-neutral-500">
+          {role}
+        </div>
+      </div>
+    </div>
+  </div>
             ))}
           </React.Fragment>
         ))}
