@@ -6,34 +6,27 @@ import { AnimatePresence, motion } from "framer-motion";
 const PRELOADER_FINISHED_EVENT = "olidev-preloader-finished";
 const VIDEO_SRC = "/videos/olidev-splash.mp4";
 
-const START_TIMEOUT = 4000;
-const TOTAL_TIMEOUT = 15000;
+const START_TIMEOUT = 8000;
+const TOTAL_TIMEOUT = 20000;
 
 function notifyPreloaderFinished() {
   try {
-    window.sessionStorage.setItem(PRELOADER_FINISHED_EVENT, "true");
+    window.sessionStorage.setItem(
+      PRELOADER_FINISHED_EVENT,
+      "true"
+    );
   } catch {
-    // Mantém a notificação se o armazenamento estiver indisponível.
+    // A notificação funciona mesmo sem sessionStorage.
   }
 
-  window.dispatchEvent(new Event(PRELOADER_FINISHED_EVENT));
+  window.dispatchEvent(
+    new Event(PRELOADER_FINISHED_EVENT)
+  );
 }
 
 export default function OlidevPreloader() {
   const videoRef = useRef<HTMLVideoElement>(null);
-
   const [isVisible, setIsVisible] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  // Libera o site se houver demora excessiva ou travamento.
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      videoRef.current?.pause();
-      setIsVisible(false);
-    }, TOTAL_TIMEOUT);
-
-    return () => window.clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -42,7 +35,6 @@ export default function OlidevPreloader() {
     if (!video) return;
 
     let cancelled = false;
-    let attempted = false;
     let closing = false;
 
     const closeSplash = () => {
@@ -50,61 +42,76 @@ export default function OlidevPreloader() {
 
       closing = true;
       window.clearTimeout(startTimer);
+      window.clearTimeout(totalTimer);
+
       video.pause();
       setIsVisible(false);
     };
 
-    const startTimer = window.setTimeout(
+    const startTimer = window.setTimeout(() => {
+      console.warn("[OLIDEV splash] Tempo de início excedido.");
+      closeSplash();
+    }, START_TIMEOUT);
+
+    const totalTimer = window.setTimeout(
       closeSplash,
-      START_TIMEOUT
+      TOTAL_TIMEOUT
     );
 
     const handlePlaying = () => {
-      if (cancelled || closing) return;
-
       window.clearTimeout(startTimer);
-      setIsPlaying(true);
     };
 
-    const startPlayback = async () => {
-      if (cancelled || attempted || closing) return;
-
-      attempted = true;
-      video.muted = true;
-      video.defaultMuted = true;
-
-      try {
-        await video.play();
-
-        if (cancelled || closing) {
-          video.pause();
-        }
-      } catch {
-        closeSplash();
-      }
+    const handleError = () => {
+      console.error(
+        "[OLIDEV splash] Erro do vídeo:",
+        video.error
+      );
+      closeSplash();
     };
 
-    video.addEventListener("canplay", startPlayback);
     video.addEventListener("playing", handlePlaying);
     video.addEventListener("ended", closeSplash);
-    video.addEventListener("error", closeSplash);
+    video.addEventListener("error", handleError);
+
+    // Define as propriedades antes de solicitar a reprodução.
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.autoplay = true;
 
     if (video.error) {
-      closeSplash();
-    } else if (
-      video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
-    ) {
-      void startPlayback();
+      handleError();
+    } else {
+      // A Promise aguarda a preparação da mídia.
+      // Não é necessário aguardar canplay para chamar play().
+      void video.play().then(
+        () => {
+          if (cancelled || closing) {
+            video.pause();
+          }
+        },
+        (error: unknown) => {
+          if (cancelled || closing) return;
+
+          console.error(
+            "[OLIDEV splash] Reprodução rejeitada:",
+            error
+          );
+          closeSplash();
+        }
+      );
     }
 
     return () => {
       cancelled = true;
-      window.clearTimeout(startTimer);
 
-      video.removeEventListener("canplay", startPlayback);
+      window.clearTimeout(startTimer);
+      window.clearTimeout(totalTimer);
+
       video.removeEventListener("playing", handlePlaying);
       video.removeEventListener("ended", closeSplash);
-      video.removeEventListener("error", closeSplash);
+      video.removeEventListener("error", handleError);
 
       video.pause();
     };
@@ -128,6 +135,7 @@ export default function OlidevPreloader() {
           <video
             ref={videoRef}
             src={VIDEO_SRC}
+            autoPlay
             muted
             playsInline
             preload="auto"
@@ -135,9 +143,6 @@ export default function OlidevPreloader() {
             disablePictureInPicture
             aria-hidden="true"
             className="pointer-events-none block h-auto max-h-[75dvh] w-[92vw] max-w-[720px] select-none object-contain"
-            style={{
-              opacity: isPlaying ? 1 : 0,
-            }}
           />
         </motion.div>
       )}
